@@ -1,0 +1,505 @@
+<!doctype html><html><head><meta charset="utf8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>UnitForge — Convert Loud</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --ink:#15130f; --paper:#e8372b; --card:#ffffff; --surface:#fdece6;
+    --yellow:#ffd23f; --blue:#3b82f6;
+    --line:3px; --shadow-c:#15130f;
+    --f-display:"Unbounded",system-ui,sans-serif;
+    --f-mono:"JetBrains Mono",ui-monospace,monospace;
+    --f-body:"Inter",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; scroll-padding-top:74px;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink); font-family:var(--f-body);
+    font-size:16px; line-height:1.55;
+    background-image:radial-gradient(circle, #c42a20 1.5px, transparent 1.5px);
+    background-size:26px 26px;
+  }
+  .wrap{max-width:1140px; margin-inline:auto; padding-inline:22px;}
+  a{color:inherit;}
+  h1,h2,h3{font-family:var(--f-display); margin:0; line-height:1.08;}
+  p{margin:0 0 12px;}
+  button{font-family:inherit;}
+  ::selection{background:var(--ink); color:var(--yellow);}
+  .hard{border:var(--line) solid var(--ink); box-shadow:7px 7px 0 var(--shadow-c);}
+  .hard-sm{border:2.5px solid var(--ink); box-shadow:4px 4px 0 var(--shadow-c);}
+
+  /* marquee */
+  .marquee{background:var(--ink); color:var(--yellow); overflow:hidden; border-bottom:var(--line) solid var(--ink); white-space:nowrap;}
+  .marquee-track{display:inline-flex; gap:40px; padding:10px 0; animation:scroll 26s linear infinite;}
+  .marquee span{font-family:var(--f-mono); font-size:13px; letter-spacing:0.03em; padding-inline:20px;}
+  @keyframes scroll{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+  @media (prefers-reduced-motion:reduce){.marquee-track{animation:none;}}
+
+  /* nav */
+  .topbar{position:sticky; top:0; z-index:30; background:var(--paper); border-bottom:var(--line) solid var(--ink);}
+  .topbar-inner{max-width:1140px; margin-inline:auto; padding:14px 22px; display:flex; align-items:center; justify-content:space-between; gap:16px;}
+  .brand{display:flex; align-items:center; gap:10px; font-family:var(--f-display); font-weight:800; font-size:1.2rem; color:var(--card);}
+  .brand .mark{width:34px; height:34px; background:var(--blue); border:2.5px solid var(--ink); border-radius:9px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px; transform:rotate(-6deg);}
+  .navlinks{display:flex; gap:10px; font-family:var(--f-mono); font-size:12.5px; font-weight:600;}
+  .navlinks a{text-decoration:none; padding:8px 13px; border-radius:20px; border:2px solid var(--ink); background:var(--card);}
+  .navlinks a:nth-child(odd):hover{background:var(--yellow);}
+  .navlinks a:nth-child(even):hover{background:var(--blue); color:#fff;}
+  .navcta{font-family:var(--f-mono); font-size:12.5px; font-weight:700; letter-spacing:0.02em; background:var(--yellow); border:2.5px solid var(--ink); box-shadow:3px 3px 0 var(--ink); padding:9px 16px; border-radius:9px; text-decoration:none; color:var(--ink);}
+  .navcta:active{box-shadow:0 0 0 var(--ink); transform:translate(3px,3px);}
+
+  /* hero */
+  .hero{padding:56px 0 40px; position:relative;}
+  .hero-grid{display:grid; grid-template-columns:1.15fr 1fr; gap:36px; align-items:center;}
+  .badge{display:inline-flex; align-items:center; gap:8px; font-family:var(--f-mono); font-size:12px; font-weight:700; letter-spacing:0.04em; background:var(--card); padding:7px 14px; border-radius:30px; transform:rotate(-2deg); margin-bottom:18px;}
+  .badge .dot{width:8px; height:8px; border-radius:50%; background:var(--yellow); border:1.5px solid var(--ink);}
+  h1.big{font-size:clamp(2.4rem,6vw,4rem); font-weight:800; color:var(--card);}
+  h1.big .ln{display:block;}
+  h1.big .c1{color:var(--yellow);}
+  h1.big .c2{color:var(--blue); -webkit-text-stroke:0;}
+  .lead{font-size:1.1rem; max-width:34em; margin-top:16px; font-weight:500; color:var(--card);}
+  .hero-ctas{display:flex; gap:14px; margin-top:26px; flex-wrap:wrap;}
+  .btn{font-family:var(--f-mono); font-weight:700; font-size:14px; padding:13px 22px; border-radius:10px; text-decoration:none; cursor:pointer; border:2.5px solid var(--ink); box-shadow:4px 4px 0 var(--ink); transition:transform .08s;}
+  .btn:active{transform:translate(4px,4px); box-shadow:0 0 0 var(--ink);}
+  .btn-pink{background:var(--yellow); color:var(--ink);}
+  .btn-white{background:var(--card); color:var(--ink);}
+
+  .chipfield{position:relative; height:320px;}
+  .uchip{position:absolute; width:104px; height:104px; border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:var(--f-display); font-weight:800;}
+  .uchip b{font-size:1.7rem;}
+  .uchip span{font-family:var(--f-mono); font-size:9.5px; font-weight:600; margin-top:2px;}
+  .uchip.c1{background:var(--yellow); top:0; left:28%; transform:rotate(-8deg);}
+  .uchip.c2{background:var(--card); top:18%; left:0; transform:rotate(7deg);}
+  .uchip.c3{background:var(--blue); color:#fff; top:4%; right:2%; transform:rotate(10deg);}
+  .uchip.c4{background:var(--yellow); bottom:10%; left:14%; transform:rotate(5deg);}
+  .uchip.c5{background:var(--blue); color:#fff; bottom:0; right:16%; transform:rotate(-9deg);}
+  .ring{position:absolute; width:70px; height:70px; border-radius:50%; border:4px solid var(--card); top:40%; left:40%; opacity:0.6;}
+  .star{position:absolute; width:34px; height:34px; background:var(--ink); top:8%; left:48%;
+    clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);}
+
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:38px;}
+  .stat{background:var(--card); padding:16px 10px; border-radius:12px; text-align:center;}
+  .stat:nth-child(1){transform:rotate(-1.4deg);}
+  .stat:nth-child(2){transform:rotate(1.1deg);}
+  .stat:nth-child(3){transform:rotate(-0.8deg);}
+  .stat:nth-child(4){transform:rotate(1.6deg);}
+  .stat b{display:block; font-family:var(--f-display); font-size:1.5rem; font-weight:800;}
+  .stat span{display:block; font-family:var(--f-mono); font-size:9.5px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; margin-top:3px;}
+
+  /* sections */
+  section{padding:64px 0;}
+  .tag-no{display:inline-block; font-family:var(--f-mono); font-size:12px; font-weight:700; background:var(--ink); color:var(--yellow); padding:4px 10px; border-radius:5px; margin-right:8px;}
+  .kicker{font-family:var(--f-mono); font-size:12.5px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:12px; color:var(--card);}
+  section h2{font-size:clamp(1.8rem,4vw,2.5rem); font-weight:800; margin-bottom:12px; color:var(--card);}
+  .section-sub{max-width:40em; margin-bottom:32px; font-weight:500; color:var(--card);}
+
+  /* converter */
+  .panel{background:var(--card); border-radius:20px; padding:30px;}
+  .tabs{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:26px;}
+  .tab{font-family:var(--f-mono); font-size:13px; font-weight:700; padding:10px 16px; border-radius:30px; border:2.5px solid var(--ink); background:var(--surface); cursor:pointer;}
+  .tab.on{background:var(--yellow);}
+  .conv-grid{display:grid; grid-template-columns:1fr auto 1fr; gap:20px; align-items:end;}
+  .field label{display:block; font-family:var(--f-mono); font-size:11px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; margin-bottom:8px;}
+  .field select, .field input{
+    width:100%; background:var(--surface); border:2.5px solid var(--ink); color:var(--ink);
+    padding:12px; border-radius:10px; font-family:var(--f-mono); font-size:1.05rem; font-weight:600;
+  }
+  .field select:focus, .field input:focus{outline:3px solid var(--blue); outline-offset:1px;}
+  .field input{font-size:1.5rem; font-weight:700;}
+  .swap-btn{width:48px; height:48px; border-radius:50%; border:2.5px solid var(--ink); background:var(--yellow); font-size:1.3rem; cursor:pointer; margin-bottom:2px;}
+  .swap-btn:active{transform:rotate(180deg); transition:transform .2s;}
+  .result-row{display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:26px; padding:18px; border-radius:12px; background:var(--yellow); flex-wrap:wrap; border:2.5px solid var(--ink);}
+  .result-text{font-family:var(--f-mono); font-size:1.25rem; font-weight:600;}
+  .result-text b{font-size:1.5rem; font-weight:800;}
+  .copy-btn{font-family:var(--f-mono); font-size:12px; font-weight:700; text-transform:uppercase; background:var(--card); border:2.5px solid var(--ink); padding:9px 14px; border-radius:8px; cursor:pointer;}
+  .copy-btn:hover{background:var(--ink); color:var(--yellow);}
+  .quickwrap{margin-top:24px;}
+  .quickwrap .lbl{font-family:var(--f-mono); font-size:11px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; margin-bottom:10px;}
+  .chips{display:flex; flex-wrap:wrap; gap:9px;}
+  .chip{font-family:var(--f-mono); font-size:12px; font-weight:600; border:2px solid var(--ink); background:var(--surface); padding:7px 12px; border-radius:8px; cursor:pointer;}
+  .chip:hover{background:var(--blue); color:#fff;}
+  .recent{margin-top:18px; font-family:var(--f-mono); font-size:12.5px; font-weight:500;}
+
+  /* cheat sheet */
+  .sheet-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px;}
+  .sheet-card{background:var(--card); border-radius:14px; padding:20px;}
+  .sheet-card:nth-child(5n+1){transform:rotate(-1deg);}
+  .sheet-card:nth-child(5n+2){transform:rotate(0.8deg);}
+  .sheet-card:nth-child(5n+3){transform:rotate(-0.6deg);}
+  .sheet-card:nth-child(5n+4){transform:rotate(1deg);}
+  .sheet-card:nth-child(5n+5){transform:rotate(-0.9deg);}
+  .sheet-card h3{font-size:1.05rem; margin-bottom:12px; font-family:var(--f-mono); font-weight:700; display:inline-block; background:var(--yellow); padding:3px 9px; border-radius:5px;}
+  .sheet-card div{font-family:var(--f-mono); font-size:13px; font-weight:500; padding:7px 0; border-bottom:2px dashed #e4d8bc;}
+  .sheet-card div:last-child{border-bottom:0;}
+
+  /* features */
+  .feat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  .feat-card{background:var(--card); border-radius:16px; padding:24px;}
+  .feat-card:nth-child(1){background:var(--yellow);}
+  .feat-card:nth-child(2){background:var(--card);}
+  .feat-card:nth-child(3){background:var(--blue); color:#fff;}
+  .feat-card .icon{width:42px; height:42px; background:var(--card); border:2.5px solid var(--ink); border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:16px; font-size:1.2rem; color:var(--ink);}
+  .feat-card h3{font-size:1.15rem; margin-bottom:8px; font-weight:700;}
+  .feat-card p{margin:0; font-weight:500; font-size:0.95rem;}
+
+  /* pricing */
+  .price-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:20px; max-width:720px;}
+  .price-card{background:var(--card); border-radius:18px; padding:30px; position:relative;}
+  .price-card.pro{background:var(--yellow);}
+  .price-badge{position:absolute; top:-16px; right:24px; background:var(--ink); color:var(--yellow); font-family:var(--f-mono); font-size:11px; font-weight:700; letter-spacing:0.03em; padding:6px 13px; border-radius:30px; transform:rotate(-4deg);}
+  .price-card h3{font-family:var(--f-mono); font-size:13px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:16px;}
+  .price-amount{font-family:var(--f-display); font-size:2.7rem; font-weight:800;}
+  .price-amount span{font-family:var(--f-mono); font-size:0.85rem; font-weight:500;}
+  .price-card ul{list-style:none; margin:22px 0 26px; padding:0;}
+  .price-card li{padding:9px 0; border-bottom:2px dashed rgba(21,19,15,0.25); font-size:0.92rem; font-weight:600; display:flex; gap:9px; align-items:center;}
+  .price-card li::before{content:"●"; font-size:8px;}
+  .price-card .btn{display:block; text-align:center; width:100%;}
+
+  footer{padding:36px 0 60px; font-family:var(--f-mono); font-size:12.5px; font-weight:600; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; border-top:var(--line) solid var(--ink); color:var(--card);}
+
+  @media (max-width:860px){
+    .hero-grid{grid-template-columns:1fr;}
+    .chipfield{height:220px;}
+    .navlinks{display:none;}
+    .conv-grid{grid-template-columns:1fr;}
+    .swap-btn{justify-self:center;}
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .feat-grid{grid-template-columns:1fr;}
+    .price-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="marquee"><div class="marquee-track">
+  <span>1 IN = 25.4 MM ★</span><span>1 ATM = 101,325 PA ★</span><span>0°C = 32°F ★</span><span>1 KWH = 3.6 MJ ★</span><span>1 LB = 0.453 KG ★</span><span>NO SERVER, NO WAITING ★</span>
+  <span>1 IN = 25.4 MM ★</span><span>1 ATM = 101,325 PA ★</span><span>0°C = 32°F ★</span><span>1 KWH = 3.6 MJ ★</span><span>1 LB = 0.453 KG ★</span><span>NO SERVER, NO WAITING ★</span>
+</div></div>
+
+<div class="topbar"><div class="topbar-inner">
+  <div class="brand"><span class="mark">⇌</span>UnitForge</div>
+  <nav class="navlinks">
+    <a href="#converter">Converter</a>
+    <a href="#cheatsheet">Cheat sheet</a>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+  </nav>
+  <a class="navcta" href="#converter">Open converter</a>
+</div></div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="badge"><span class="dot"></span>LOUD NUMBERS, EXACT MATH</div>
+        <h1 class="big">
+          <span class="ln">Convert</span>
+          <span class="ln c1">anything,</span>
+          <span class="ln">make it <span class="c2">pop.</span></span>
+        </h1>
+        <p class="lead">Length, mass, pressure, energy, temperature — five converters, zero spreadsheets. Everything runs in your browser, so it's instant and nobody's watching.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-pink" href="#converter">Start converting →</a>
+          <a class="btn btn-white" href="#pricing">See plans ★</a>
+        </div>
+      </div>
+      <div class="chipfield">
+        <div class="ring"></div>
+        <div class="star"></div>
+        <div class="uchip hard-sm c1"><b>M</b><span>METRE</span></div>
+        <div class="uchip hard-sm c2"><b>KG</b><span>KILOGRAM</span></div>
+        <div class="uchip hard-sm c3"><b>Pa</b><span>PASCAL</span></div>
+        <div class="uchip hard-sm c4"><b>J</b><span>JOULE</span></div>
+        <div class="uchip hard-sm c5"><b>K</b><span>KELVIN</span></div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat hard-sm"><b>5</b><span>Categories</span></div>
+      <div class="stat hard-sm"><b>30+</b><span>Units</span></div>
+      <div class="stat hard-sm"><b>0ms</b><span>Server wait</span></div>
+      <div class="stat hard-sm"><b>100%</b><span>Offline</span></div>
+    </div>
+  </header>
+
+  <section id="converter">
+    <div class="kicker"><span class="tag-no">01</span>THE CONVERTER</div>
+    <h2>Pick a lane, type a number</h2>
+    <p class="section-sub">Both fields update as you type. Swap directions with one click, or jump to a common conversion.</p>
+    <div class="panel hard">
+      <div class="tabs" id="tabs"></div>
+      <div class="conv-grid">
+        <div class="field">
+          <label>From</label>
+          <select id="fromUnit"></select>
+          <input id="fromVal" type="number" value="1" inputmode="decimal">
+        </div>
+        <button class="swap-btn" id="swapBtn" title="Swap units">⇄</button>
+        <div class="field">
+          <label>To</label>
+          <select id="toUnit"></select>
+          <input id="toVal" type="text" readonly>
+        </div>
+      </div>
+      <div class="result-row">
+        <div class="result-text" id="resultText">1 m = <b>3.28084</b> ft</div>
+        <button class="copy-btn" id="copyBtn">Copy result</button>
+      </div>
+      <div class="quickwrap">
+        <div class="lbl">Quick picks</div>
+        <div class="chips" id="quickPicks"></div>
+      </div>
+      <div class="recent" id="recentLine">Recent: —</div>
+    </div>
+  </section>
+
+  <section id="cheatsheet">
+    <div class="kicker"><span class="tag-no">02</span>PIN IT UP</div>
+    <h2>Cheat sheet</h2>
+    <p class="section-sub">The constants worth memorizing, one card per category.</p>
+    <div class="sheet-grid" id="sheetGrid"></div>
+  </section>
+
+  <section id="features">
+    <div class="kicker"><span class="tag-no">03</span>WHY IT'S GOOD</div>
+    <h2>Built for the workbench, not a boardroom</h2>
+    <p class="section-sub">No account to convert a number. No dashboard to find a constant.</p>
+    <div class="feat-grid">
+      <div class="feat-card hard-sm"><div class="icon">⇄</div><h3>Live, both ways</h3><p>Type into either field and the other follows instantly. No "convert" button to hunt for.</p></div>
+      <div class="feat-card hard-sm"><div class="icon">◆</div><h3>SI-exact constants</h3><p>Factors come from defined SI values, not rounded textbook approximations.</p></div>
+      <div class="feat-card hard-sm"><div class="icon">⌁</div><h3>Runs fully offline</h3><p>Every calculation happens in your browser. No requests, no sign-up, no tracking.</p></div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="kicker"><span class="tag-no">04</span>PICK A PLAN</div>
+    <h2>Pricing that stays out of your way</h2>
+    <p class="section-sub">Free covers nearly everyone. Pro adds precision for the rest.</p>
+    <div class="price-grid">
+      <div class="price-card hard">
+        <h3>Student</h3>
+        <div class="price-amount">$0 <span>forever</span></div>
+        <ul>
+          <li>All 5 converter categories</li>
+          <li>6 significant digits</li>
+          <li>Works fully offline</li>
+          <li>No account required</li>
+        </ul>
+        <a class="btn btn-white" href="#converter">Get started</a>
+      </div>
+      <div class="price-card pro hard">
+        <div class="price-badge">★ POPULAR</div>
+        <h3>Pro</h3>
+        <div class="price-amount">$4 <span>/month</span></div>
+        <ul>
+          <li>Everything in Student</li>
+          <li>15 significant digits</li>
+          <li>Saved conversion history</li>
+          <li>No ads, ever</li>
+        </ul>
+        <a class="btn btn-white" href="#converter">Go Pro →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>⇌ UnitForge — forged in a browser tab.</div>
+    <div>© 2026 UnitForge</div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  var CATS = {
+    length: {
+      label: "Length", base: "m",
+      units: {
+        "µm": {l:"Micrometre (µm)", f:1e-6}, "mm": {l:"Millimetre (mm)", f:1e-3},
+        "cm": {l:"Centimetre (cm)", f:1e-2}, "m": {l:"Metre (m)", f:1},
+        "km": {l:"Kilometre (km)", f:1000}, "in": {l:"Inch (in)", f:0.0254},
+        "ft": {l:"Foot (ft)", f:0.3048}, "yd": {l:"Yard (yd)", f:0.9144},
+        "mi": {l:"Mile (mi)", f:1609.344}, "nmi": {l:"Nautical mile (nmi)", f:1852}
+      },
+      quick: [["in","mm",1],["ft","m",1],["mi","km",1],["nmi","km",1],["m","ft",1]],
+      sheet: ["1 in = 25.4 mm","1 ft = 0.3048 m","1 mi = 1.609344 km","1 nmi = 1852 m"]
+    },
+    mass: {
+      label: "Mass", base:"kg",
+      units: {
+        "mg": {l:"Milligram (mg)", f:1e-6}, "g": {l:"Gram (g)", f:1e-3},
+        "kg": {l:"Kilogram (kg)", f:1}, "t": {l:"Tonne (t)", f:1000},
+        "lb": {l:"Pound (lb)", f:0.45359237}, "oz": {l:"Ounce (oz)", f:0.028349523125},
+        "slug": {l:"Slug", f:14.59390294}
+      },
+      quick: [["lb","kg",1],["oz","g",1],["kg","lb",1],["t","kg",1]],
+      sheet: ["1 lb = 0.45359237 kg","1 oz ≈ 28.35 g","1 slug ≈ 14.59 kg","1 t = 1000 kg"]
+    },
+    pressure: {
+      label: "Pressure", base:"Pa",
+      units: {
+        "Pa": {l:"Pascal (Pa)", f:1}, "kPa": {l:"Kilopascal (kPa)", f:1000},
+        "bar": {l:"Bar", f:100000}, "atm": {l:"Atmosphere (atm)", f:101325},
+        "psi": {l:"PSI", f:6894.757293168}, "mmHg": {l:"mmHg", f:133.322387415}
+      },
+      quick: [["atm","Pa",1],["psi","kPa",1],["bar","psi",1],["mmHg","Pa",1]],
+      sheet: ["1 atm = 101 325 Pa","1 bar = 100 kPa","1 psi ≈ 6.895 kPa","1 mmHg ≈ 133.3 Pa"]
+    },
+    energy: {
+      label: "Energy", base:"J",
+      units: {
+        "J": {l:"Joule (J)", f:1}, "kJ": {l:"Kilojoule (kJ)", f:1000},
+        "cal": {l:"Calorie (cal)", f:4.184}, "kWh": {l:"Kilowatt-hour (kWh)", f:3.6e6},
+        "BTU": {l:"BTU", f:1055.05585262}, "eV": {l:"Electronvolt (eV)", f:1.602176634e-19}
+      },
+      quick: [["kWh","kJ",1],["cal","J",1],["BTU","J",1],["eV","J",1]],
+      sheet: ["1 kWh = 3.6 MJ","1 cal = 4.184 J","1 BTU ≈ 1055 J","1 eV ≈ 1.602×10⁻¹⁹ J"]
+    },
+    temperature: {
+      label: "Temperature", base:"C", special:true,
+      units: {
+        "C": {l:"Celsius (°C)"}, "F": {l:"Fahrenheit (°F)"},
+        "K": {l:"Kelvin (K)"}, "R": {l:"Rankine (°R)"}
+      },
+      quick: [["C","F",0],["C","K",0],["F","C",100],["C","F",-40]],
+      sheet: ["°F = °C × 9/5 + 32","K = °C + 273.15","°R = K × 9/5","−40 °C = −40 °F"]
+    }
+  };
+  var CAT_ORDER = ["length","mass","pressure","energy","temperature"];
+  var curCat = "length";
+
+  function toCelsius(v,u){
+    if(u==="C") return v;
+    if(u==="F") return (v-32)*5/9;
+    if(u==="K") return v-273.15;
+    if(u==="R") return (v-491.67)*5/9;
+  }
+  function fromCelsius(c,u){
+    if(u==="C") return c;
+    if(u==="F") return c*9/5+32;
+    if(u==="K") return c+273.15;
+    if(u==="R") return (c+273.15)*9/5;
+  }
+
+  function convert(cat, val, from, to){
+    var def = CATS[cat];
+    if(def.special){
+      return fromCelsius(toCelsius(val, from), to);
+    }
+    var base = val * def.units[from].f;
+    return base / def.units[to].f;
+  }
+
+  function fmt(n){
+    if(!isFinite(n)) return "—";
+    if(Math.abs(n) !== 0 && (Math.abs(n) < 0.0001 || Math.abs(n) >= 1e9)) return n.toExponential(4);
+    var r = Math.round(n*1e6)/1e6;
+    return r.toString();
+  }
+
+  var tabsEl = document.getElementById("tabs");
+  var fromSel = document.getElementById("fromUnit");
+  var toSel = document.getElementById("toUnit");
+  var fromVal = document.getElementById("fromVal");
+  var toVal = document.getElementById("toVal");
+  var resultText = document.getElementById("resultText");
+  var quickWrap = document.getElementById("quickPicks");
+  var recentLine = document.getElementById("recentLine");
+  var sheetGrid = document.getElementById("sheetGrid");
+  var recent = [];
+
+  function buildTabs(){
+    tabsEl.innerHTML = "";
+    CAT_ORDER.forEach(function(key){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "tab" + (key===curCat?" on":"");
+      b.textContent = CATS[key].label;
+      b.addEventListener("click", function(){ curCat = key; renderCategory(); });
+      tabsEl.appendChild(b);
+    });
+  }
+
+  function buildSelects(){
+    var def = CATS[curCat];
+    var keys = Object.keys(def.units);
+    fromSel.innerHTML = ""; toSel.innerHTML = "";
+    keys.forEach(function(k){
+      var o1 = document.createElement("option"); o1.value=k; o1.textContent=def.units[k].l;
+      var o2 = document.createElement("option"); o2.value=k; o2.textContent=def.units[k].l;
+      fromSel.appendChild(o1); toSel.appendChild(o2);
+    });
+    fromSel.selectedIndex = 0;
+    toSel.selectedIndex = Math.min(1, keys.length-1);
+  }
+
+  function buildQuickPicks(){
+    var def = CATS[curCat];
+    quickWrap.innerHTML = "";
+    def.quick.forEach(function(q){
+      var from=q[0], to=q[1], amount=q[2];
+      if(!def.units[from] || !def.units[to]) return;
+      var chip = document.createElement("button");
+      chip.type="button"; chip.className="chip";
+      chip.textContent = amount + " " + from + " → " + to;
+      chip.addEventListener("click", function(){
+        fromSel.value = from; toSel.value = to; fromVal.value = amount;
+        doConvert();
+      });
+      quickWrap.appendChild(chip);
+    });
+  }
+
+  function buildSheet(){
+    sheetGrid.innerHTML = "";
+    CAT_ORDER.forEach(function(key){
+      var def = CATS[key];
+      var card = document.createElement("div");
+      card.className = "sheet-card hard-sm";
+      var h = document.createElement("h3"); h.textContent = def.label; card.appendChild(h);
+      def.sheet.forEach(function(line){
+        var d = document.createElement("div"); d.textContent = line; card.appendChild(d);
+      });
+      sheetGrid.appendChild(card);
+    });
+  }
+
+  function doConvert(skipRecent){
+    var v = parseFloat(fromVal.value);
+    if(isNaN(v)){ toVal.value=""; return; }
+    var r = convert(curCat, v, fromSel.value, toSel.value);
+    toVal.value = fmt(r);
+    resultText.innerHTML = v + " " + fromSel.value + " = <b>" + fmt(r) + "</b> " + toSel.value;
+    if(!skipRecent){
+      recent.unshift(v + " " + fromSel.value + " → " + fmt(r) + " " + toSel.value);
+      recent = recent.slice(0,4);
+      recentLine.innerHTML = "Recent: " + recent.join(" · ");
+    }
+  }
+
+  function renderCategory(){
+    buildTabs(); buildSelects(); buildQuickPicks();
+    fromVal.value = 1;
+    doConvert(true);
+  }
+
+  fromSel.addEventListener("change", function(){ doConvert(); });
+  toSel.addEventListener("change", function(){ doConvert(); });
+  fromVal.addEventListener("input", function(){ doConvert(); });
+  document.getElementById("swapBtn").addEventListener("click", function(){
+    var f = fromSel.value, t = toSel.value;
+    fromSel.value = t; toSel.value = f;
+    doConvert();
+  });
+  document.getElementById("copyBtn").addEventListener("click", function(){
+    var text = toVal.value + " " + toSel.value;
+    var el = this;
+    function done(){ el.textContent="Copied!"; setTimeout(function(){el.textContent="Copy result";},1400); }
+    try{ navigator.clipboard.writeText(text).then(done, done); }catch(e){ done(); }
+  });
+
+  buildTabs(); buildSelects(); buildQuickPicks(); buildSheet();
+  doConvert(true);
+})();
+</script>
+
+</body></html>
